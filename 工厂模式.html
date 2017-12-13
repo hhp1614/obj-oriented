@@ -1,0 +1,279 @@
+<script>
+	console.group('===============工厂模式===============');
+
+	var factory = {} // 单例
+	factory.fn1 = function() {
+		// 工厂内方法1
+		this.str = 'this is fn1';
+		this.fn = function() {
+			console.log('methods in fn1');
+		}
+	}
+	factory.fn2 = function() {
+		// 工厂内方法2
+		this.str = 'this is fn2';
+		this.fn = function() {
+			console.log('methods in fn2');
+		}
+	}
+	factory.fn = function(para) {
+		// 实例化工厂内方法的入口函数
+		return new factory[para]();
+	}
+	var vmFactory1 = factory.fn('fn1'); // 实例化fn1
+	var vmFactory2 = factory.fn('fn2'); // 实例化fn2
+	console.log(vmFactory1.str); // this is fn1
+	console.log(vmFactory2.str); // this is fn2
+	vmFactory1.fn(); // methods in fn1
+	vmFactory2.fn(); // methods in fn2
+
+	console.groupEnd();
+</script>
+<script>
+	console.group('===============简单工厂===============');
+
+	var easyFactory = function () {} // 构造函数
+	easyFactory.fn1 = function () {
+		// 工厂内方法
+		var str = 'no things';
+		return str;
+	}
+	easyFactory.fn2 = function () {
+		// 工厂内方法
+		var fn = function () {
+			console.log('do somethings');
+		}
+		return fn;
+	}
+	var newFn1 = function () {
+		var str = easyFactory.fn1(); // 实例化工厂内方法1
+		console.log(str);
+		// coding
+	}
+	newFn1();
+	var newFn2 = function () {
+		var fn = easyFactory.fn2(); // 实例化工厂内方法2
+		fn();
+		// coding
+	}
+	newFn2();
+
+	console.groupEnd();
+</script>
+<script>
+	console.group('===============抽象工厂===============');
+
+	var abstractFactory = function () {
+		this.str = 'abstractFactory | 抽象工厂'
+	}
+	abstractFactory.prototype = {
+		createFn: function () {
+			throw new Error('this is an abstract class | 这是一个抽象工厂');
+		}
+	}
+	var newFn = function () {
+		abstractFactory.call(this); // 继承类 abstractFactory
+		this.newStr = 'newFn';
+	}
+	newFn.prototype = new abstractFactory();
+	newFn.prototype.constructor = newFn; // 派生子类
+	// 重新定义 createFn 方法
+	newFn.prototype.createFn = function () {
+		console.log(this.str); // abstractFactory | 抽象工厂
+		console.log(this.newStr); // newFn
+	}
+	// 实例化
+	var vmAbstractFactory = new abstractFactory();
+	var vmNewFn = new newFn();
+	// console.log(vmAbstractFactory);
+	// console.log(vmNewFn);
+	// vmAbstractFactory.createFn(); // 抛出异常
+	vmNewFn.createFn();
+
+
+	console.groupEnd();
+</script>
+<!-- 以播放器为例子，功能：播放，暂停，静音，上一首，下一首 -->
+<script>
+	console.group('===============实例1===============');
+
+	function music1(action) {
+		var obj = new Object;
+		obj.name = '网易云音乐';
+		obj.playing = '举高高~';
+		switch (action) {
+			case 'play':
+				obj.info = '网易云-播放';
+				break;
+			case 'stop':
+				obj.info = '网易云-暂停';
+				break;
+			case 'mute':
+				obj.info = '网易云-静音';
+				break;
+			case 'next':
+				obj.info = '网易云-下一首';
+				break;
+			case 'prev':
+				obj.info = '网易云-上一首';
+				break;
+		}
+		return obj;
+	}
+	var m1 = new music1('mute');
+	console.log('name:', m1.name);
+	console.log('playing:', m1.playing);
+	console.log('info:', m1.info);
+
+	console.groupEnd()
+</script>
+<script>
+	console.group('===============实例2===============');
+
+	var music2 = function () {
+		this.name = '网易云音乐';
+		this.playing = '举高高~';
+	}
+	music2.prototype = {
+		play: function () {
+			this.info = '网易云-播放';
+		},
+		stop: function () {
+			this.info = '网易云-暂停';
+		},
+		mute: function () {
+			this.info = '网易云-静音';
+		},
+		next: function () {
+			this.info = '网易云-下一首';
+		},
+		prev: function () {
+			this.info = '网易云-上一首';
+		}
+	}
+	var m2 = new music2();
+	m2.next();
+	console.log('name:', m2.name);
+	console.log('playing:', m2.playing);
+	console.log('info:', m2.info);
+
+	console.groupEnd();
+</script>
+<script>
+	console.group('===============实例3===============');
+
+	var music3_cloud = function () {
+		this.name = '网易云音乐';
+		this.playing = '举高高~';
+	}
+	music3_cloud.prototype = {
+		play: function () {
+			this.info = '网易云-播放';
+		},
+		stop: function () {
+			this.info = '网易云-暂停';
+		},
+		mute: function () {
+			this.info = '网易云-静音';
+		},
+		next: function () {
+			this.info = '网易云-下一首';
+		},
+		prev: function () {
+			this.info = '网易云-上一首';
+		}
+	}
+	var music3_qq = function () {
+		this.name = 'QQ音乐';
+		this.playing = '摔~';
+	}
+	music3_qq.prototype = {
+		play: function () {
+			this.info = 'QQ-播放';
+		},
+		stop: function () {
+			this.info = 'QQ-暂停';
+		},
+		mute: function () {
+			this.info = 'QQ-静音';
+		},
+		next: function () {
+			this.info = 'QQ-下一首';
+		},
+		prev: function () {
+			this.info = 'QQ-上一首';
+		}
+	}
+	// music工厂
+	var music3 = function (type) {
+		switch (type) {
+			case 'cloud':
+				return new music3_cloud();
+			case 'qq':
+				return new music3_qq();
+		}
+	}
+	var m3 = new music3('qq');
+	m3.prev();
+	console.log('name:', m3.name);
+	console.log('playing:', m3.playing);
+	console.log('info:', m3.info);
+
+	console.groupEnd();
+</script>
+<script>
+	console.group('===============实例4===============');
+
+	// 父类 music 方法
+	var baseMusic = function (action) {
+		this.playing = '举高高~';
+		this.type = '';
+	}
+	baseMusic.prototype = {
+		play: function () {
+			this.info = this.type + '播放';
+		},
+		stop: function () {
+			this.info = this.type + '暂停';
+		},
+		mute: function () {
+			this.info = this.type + '静音';
+		},
+		next: function () {
+			this.info = this.type + '下一首';
+		},
+		prev: function () {
+			this.info = this.type + '上一首';
+		}
+	}
+	// 网易云music 构造方法
+	var cloudMusic = function (type) {
+		this.name = '网易云音乐';
+		this.type = type + '-';
+	}
+	// QQmusic 构造方法
+	var qqMusic = function () {
+		this.name = 'QQ音乐';
+		this.playing = '摔~';
+		this.type = type + '-';
+	}
+	// 继承
+	cloudMusic.prototype = new baseMusic();
+	qqMusic.prototype = new baseMusic();
+	// 音乐工厂
+	var musicFactory = function (type) {
+		switch (type) {
+			case 'cloud':
+				return new cloudMusic('网易云');
+			case 'qq':
+				return new qqMusic('QQ');
+		}
+	}
+	var music = new musicFactory('cloud');
+	music.stop();
+	console.log('name:', music.name);
+	console.log('playing:', music.playing);
+	console.log('info:', music.info);
+
+	console.groupEnd();
+</script>
