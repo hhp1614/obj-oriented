@@ -1,0 +1,126 @@
+<script>
+	console.group('===============单例模式===============');
+
+	var singletonA = (function () {
+		var home = function (message) {
+			this.notice = message;
+		}
+		var extrance;
+		var info = {
+			sendMassage: function (message) {
+				if (!extrance) {
+					extrance = new home(message);
+				}
+				return extrance;
+			}
+		}
+		return info;
+	})();
+	var singletonB = {
+		callSingleA: function (msg) {
+			var _sA = singletonA.sendMassage(msg);
+			console.log(_sA.notice);
+			_sA = null; // 等待垃圾回收
+		}
+	}
+	singletonB.callSingleA('ding~');
+
+	console.groupEnd();
+</script>
+<!-- 使用一个变量来标志当前是否已经为某个类创建过对象，如果创建了，则在下一次获取该类的实例时，直接返回之前创建的对象，否则就创建一个对象。 -->
+<script>
+	console.group('===============类/构造函数实例===============');
+
+	/* ES 6 */
+	class Singleton {
+		constructor (name) {
+			this.name = name;
+			this.instance = null;
+		}
+		getName() {
+			console.log(this.name);
+		}
+		static getInstance(name) {
+			if (!this.instance) {
+				this.instance = new Singleton(name);
+			}
+			return this.instance;
+		}
+	}
+	const instanceA = Singleton.getInstance('flandre1');
+	const instanceB = Singleton.getInstance('flandre2');
+	console.log(instanceA, instanceB);
+
+	/* ES 5 */
+	// function Singleton(name) {
+	// 	this.name = name;
+	// 	this.instance = null;
+	// }
+	// Singleton.prototype.getName = function() {
+	// 	console.log(this.name);
+	// }
+	// Singleton.getInstance = function(name) {
+	// 	if (!this.instance) {
+	// 		this.instance = new Singleton(name);
+	// 	}
+	// 	return this.instance;
+	// }
+	// var instanceA = Singleton.getInstance('flandre1');
+	// var instanceB = Singleton.getInstance('flandre2');
+	// console.log(instanceA, instanceB);
+
+	console.groupEnd();
+</script>
+<script>
+	console.group('===============闭包包装实例===============');
+
+	/* ES 6 */
+	const SingletonP = (function() {
+		let instance;
+		return class Singleton {
+			constructor(name) {
+				if (instance) {
+					return instance;
+				} else {
+					this.init(name);
+					instance = this;
+					return this;
+				}
+			}
+			init(name) {
+				this.name = name;
+				console.log('已初始化');
+			}
+		}
+	})();
+	const instanceC = new SingletonP('flandre3');
+	const instanceD = new SingletonP('flandre4');
+	console.log(instanceC, instanceD);
+
+	/* ES 5 */
+	// var SingletonP = (function () {
+	//     var instance;
+	//     return (function () {
+	//         function Singleton(name) {
+	//             if (instance) {
+	//                 return instance;
+	//             }
+	//             else {
+	//                 this.init(name);
+	//                 instance = this;
+	//                 return this;
+	//             }
+	//         }
+	//         Singleton.prototype.init = function (name) {
+	//             this.name = name;
+	//             console.log('已初始化');
+	//         };
+	//         return Singleton;
+	//     }());
+	// })();
+	// var instanceC = new SingletonP('seven1')
+	// var instanceD = new SingletonP('seven2')
+	// console.log(instanceC, instanceD);
+
+	console.groupEnd();
+</script>
